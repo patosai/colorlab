@@ -1,0 +1,94 @@
+<!DOCTYPE html5>
+<html>
+  <head>
+    <title>Color Lab</title>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.10.3/babel.min.js"></script>
+    <script type="text/javascript" src="https://fb.me/react-15.2.1.js"></script>
+    <script type="text/javascript" src="https://fb.me/react-dom-15.2.1.js"></script>
+
+    <script type="text/javascript" src="vendor/chroma.min.js"></script>
+    <script type="text/babel">
+var ColorBoxes = React.createClass({
+  generateColor(num) {
+    if (num < 0 || num > 7) {
+      return;
+    }
+
+    // 8 colors
+    var angle = (num * 45) * (Math.PI / 180);
+
+    var newL = this.props.L;
+    var newA = this.props.A * Math.cos(angle);
+    var newB = this.props.B * Math.sin(angle);
+
+    return chroma(newL, newA, newB, 'lab').hex();
+  },
+
+  render() {
+    console.log(this.props);
+    return (
+      <div className="boxes">
+        <div className="box box0" style={{backgroundColor: this.generateColor(0)}} />
+        <div className="box box1" style={{backgroundColor: this.generateColor(1)}} />
+        <div className="box box2" style={{backgroundColor: this.generateColor(2)}} />
+        <div className="box box3" style={{backgroundColor: this.generateColor(3)}} />
+        <div className="box box4" style={{backgroundColor: this.generateColor(4)}} />
+        <div className="box box5" style={{backgroundColor: this.generateColor(5)}} />
+        <div className="box box6" style={{backgroundColor: this.generateColor(6)}} />
+        <div className="box box7" style={{backgroundColor: this.generateColor(7)}} />
+      </div>
+    );
+  },
+});
+
+var Container = React.createClass({
+  getInitialState() {
+    return {
+      L: 50,
+      A: 0,
+      B: 0,
+    };
+  },
+
+  onLChange(event) {
+    this.setState({L: parseInt(event.target.value)});
+  },
+
+  onAChange(event) {
+    this.setState({A: parseInt(event.target.value)});
+  },
+
+  onBChange(event) {
+    this.setState({B: parseInt(event.target.value)});
+  },
+
+  render() {
+    return (
+      <div>
+        <input name="L" type="range" min="0" max="100" value={this.state.L} onChange={this.onLChange} />
+        <input name="A" type="range" min="-128" max="127" value={this.state.A} onChange={this.onAChange} />
+        <input name="B" type="range" min="-128" max="127" value={this.state.B} onChange={this.onBChange} />
+        <ColorBoxes L={this.state.L} A={this.state.A} B={this.state.B}/>
+      </div>
+    );
+  },
+});
+
+ReactDOM.render(<Container />, document.getElementById("container"));
+    </script>
+
+    <style type="text/css">
+.box {
+  width: 50px;
+  height: 50px;
+}
+    </style>
+
+  </head>
+
+  <body>
+    <div id="container">
+    </div>
+  </body>
+</html>
