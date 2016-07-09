@@ -9,7 +9,7 @@
 
     <script type="text/javascript" src="vendor/chroma.min.js"></script>
     <script type="text/babel">
-var radius = 50;
+var RADIUS = 50;
 var ColorBoxes = React.createClass({
   generateColor(num) {
     if (num < 0 || num > 7) {
@@ -17,11 +17,11 @@ var ColorBoxes = React.createClass({
     }
 
     // 8 colors
-    var angle = (num * 45) * (Math.PI / 180);
+    var angle = ( (num * 45) + this.props.angleOffset ) * (Math.PI / 180);
 
     var newL = this.props.L;
-    var newA = this.props.A + (radius * Math.cos(angle));
-    var newB = this.props.B + (radius * Math.sin(angle));
+    var newA = this.props.A + (RADIUS * Math.cos(angle));
+    var newB = this.props.B + (RADIUS * Math.sin(angle));
 
     return chroma(newL, newA, newB, 'lab').hex();
   },
@@ -45,10 +45,15 @@ var ColorBoxes = React.createClass({
 var Container = React.createClass({
   getInitialState() {
     return {
+      angleOffset: 0,
       L: 50,
       A: 0,
       B: 0,
     };
+  },
+
+  onAngleOffsetChange(event) {
+    this.setState({angleOffset: parseFloat(event.target.value)});
   },
 
   onLChange(event) {
@@ -66,6 +71,16 @@ var Container = React.createClass({
   render() {
     return (
       <div>
+        <label htmlFor="angleOffset">Angle Offset</label>
+        <input type="number" step="0.01" value={this.state.angleOffset} onChange={this.onAngleOffsetChange}/>
+        <input name="angleOffset"
+            type="range"
+            min="0"
+            max="360"
+            step="0.01"
+            value={this.state.angleOffset}
+            onChange={this.onAngleOffsetChange} />
+
         <label htmlFor="L">L</label>
         <input type="number" step="0.01" value={this.state.L} onChange={this.onLChange}/>
         <input name="L"
@@ -95,7 +110,7 @@ var Container = React.createClass({
             step="0.01"
             value={this.state.B}
             onChange={this.onBChange} />
-        <ColorBoxes L={this.state.L} A={this.state.A} B={this.state.B}/>
+        <ColorBoxes angleOffset={this.state.angleOffset} L={this.state.L} A={this.state.A} B={this.state.B}/>
       </div>
     );
   },
