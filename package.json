@@ -1,0 +1,23 @@
+{
+  "name": "colorlab",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/patosai/colorlab.git"
+  },
+  "author": "Patrick Tsai",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/patosai/colorlab/issues"
+  },
+  "homepage": "https://github.com/patosai/colorlab#readme",
+  "devDependencies": {
+    "express": "^4.14.0"
+  }
+}
