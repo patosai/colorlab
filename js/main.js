@@ -1,4 +1,5 @@
 var RADIUS = 50;
+
 var ColorBoxes = React.createClass({
   generateColor(num) {
     if (num < 0 || num > 7) {
@@ -15,17 +16,24 @@ var ColorBoxes = React.createClass({
     return chroma(newL, newA, newB, 'lab').hex();
   },
 
+  boxNode(num) {
+    var className = "box box" + num;
+    return (
+      <div className={className} style={{backgroundColor: this.generateColor(num)}} />
+    );
+  },
+
   render() {
+    var numbers = [];
+    for (var i = 1; i <= 8; ++i) {
+      numbers.push(i);
+    }
+
     return (
       <div className="boxes">
-        <div className="box box0" style={{backgroundColor: this.generateColor(0)}} />
-        <div className="box box1" style={{backgroundColor: this.generateColor(1)}} />
-        <div className="box box2" style={{backgroundColor: this.generateColor(2)}} />
-        <div className="box box3" style={{backgroundColor: this.generateColor(3)}} />
-        <div className="box box4" style={{backgroundColor: this.generateColor(4)}} />
-        <div className="box box5" style={{backgroundColor: this.generateColor(5)}} />
-        <div className="box box6" style={{backgroundColor: this.generateColor(6)}} />
-        <div className="box box7" style={{backgroundColor: this.generateColor(7)}} />
+        {numbers.map((val) => {
+          return this.boxNode(val);
+        })}
       </div>
     );
   },
@@ -57,49 +65,34 @@ var Container = React.createClass({
     this.setState({B: parseFloat(event.target.value)});
   },
 
+  sliderNode(name, className, min, max, step, value, onChange) {
+    return (
+      <div class="slider">
+        <label htmlFor={className}>{name}</label>
+        <input type="number" step={step} value={value} onChange={onChange}/>
+        <input name="angleOffset"
+            type="range"
+            min={min}
+            max={max}
+            step={step}
+            value={value}
+            onChange={onChange} />
+      </div>
+    );
+  },
+
   render() {
     return (
       <div>
-        <label htmlFor="angleOffset">Angle Offset</label>
-        <input type="number" step="0.01" value={this.state.angleOffset} onChange={this.onAngleOffsetChange}/>
-        <input name="angleOffset"
-            type="range"
-            min="0"
-            max="360"
-            step="0.01"
-            value={this.state.angleOffset}
-            onChange={this.onAngleOffsetChange} />
-
-        <label htmlFor="L">L</label>
-        <input type="number" step="0.01" value={this.state.L} onChange={this.onLChange}/>
-        <input name="L"
-            type="range"
-            min="0"
-            max="100"
-            step="0.01"
-            value={this.state.L}
-            onChange={this.onLChange} />
-
-        <label htmlFor="A">A</label>
-        <input type="number" step="0.01" value={this.state.A} onChange={this.onAChange}/>
-        <input name="A"
-            type="range"
-            min="-128"
-            max="127"
-            step="0.01"
-            value={this.state.A}
-            onChange={this.onAChange} />
-
-        <label htmlFor="B">B</label>
-        <input type="number" step="0.01" value={this.state.B} onChange={this.onBChange}/>
-        <input name="B"
-            type="range"
-            min="-128"
-            max="127"
-            step="0.01"
-            value={this.state.B}
-            onChange={this.onBChange} />
-        <ColorBoxes angleOffset={this.state.angleOffset} L={this.state.L} A={this.state.A} B={this.state.B}/>
+        { this.sliderNode("Angle Offset", 'angleOffset', 0, 360, 0.01, this.state.angleOffset, this.onAngleOffsetChange) }
+        { this.sliderNode("L", 'L', 0, 100, 0.01, this.state.L, this.onLChange) }
+        { this.sliderNode("A", 'A', -128, 128, 0.01, this.state.A, this.onAChange) }
+        { this.sliderNode("B", 'B', -128, 128, 0.01, this.state.B, this.onBChange) }
+        <ColorBoxes
+            angleOffset={this.state.angleOffset}
+            L={this.state.L}
+            A={this.state.A}
+            B={this.state.B}/>
       </div>
     );
   },
