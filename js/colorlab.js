@@ -55,50 +55,96 @@ var ColorLab = React.createClass({
     };
   },
 
-  onRadiusChange(event) {
+  _onRadiusChange(event) {
     this.setState({radius: parseFloat(event.target.value)});
   },
 
-  onAngleOffsetChange(event) {
+  _onAngleOffsetChange(event) {
     this.setState({angleOffset: parseFloat(event.target.value)});
   },
 
-  onLChange(event) {
+  _onLChange(event) {
     this.setState({L: parseFloat(event.target.value)});
   },
 
-  onAChange(event) {
+  _onAChange(event) {
     this.setState({A: parseFloat(event.target.value)});
   },
 
-  onBChange(event) {
+  _onBChange(event) {
     this.setState({B: parseFloat(event.target.value)});
   },
 
-  sliderNode(name, className, min, max, step, value, onChange) {
+  // obj required properties: name, className, min, max, step, value, onChange
+  _sliderNode(obj) {
     return (
       <div class='slider'>
-        <label htmlFor={className}>{name}</label>
-        <input type='number' step={step} value={value} onChange={onChange}/>
+        <label htmlFor={obj.className}>{obj.name}</label>
+        <input type='number' step={obj.step} value={obj.value} onChange={obj.onChange}/>
         <input name='angleOffset'
             type='range'
-            min={min}
-            max={max}
-            step={step}
-            value={value}
-            onChange={onChange} />
+            min={obj.min}
+            max={obj.max}
+            step={obj.step}
+            value={obj.value}
+            onChange={obj.onChange} />
       </div>
     );
   },
 
   render() {
+    var sliderNodeObjs = [
+      {
+        name: 'Radius',
+        className: 'radius',
+        min: 0,
+        max: 100,
+        step: 0.01,
+        value: this.state.radius,
+        onChange: this._onRadiusChange
+      },
+      {
+        name: 'Angle Offset',
+        className: 'angleOffset',
+        min: 0,
+        max: 360,
+        step: 0.01,
+        value: this.state.angleOffset,
+        onChange: this._onAngleOffsetChange
+      },
+      {
+        name: 'L',
+        className: 'L',
+        min: 0,
+        max: 100,
+        step: 0.01,
+        value: this.state.L,
+        onChange: this._onLChange
+      },
+      {
+        name: 'A',
+        className: 'A',
+        min: -128,
+        max: 127,
+        step: 0.01,
+        value: this.state.A,
+        onChange: this._onAChange
+      },
+      {
+        name: 'B',
+        className: 'B',
+        min: -128,
+        max: 127,
+        step: 0.01,
+        value: this.state.B,
+        onChange: this._onBChange
+      }
+    ];
     return (
       <div>
-        { this.sliderNode('Radius', 'radius', 0, 100, 0.01, this.state.radius, this.onRadiusChange) }
-        { this.sliderNode('Angle Offset', 'angleOffset', 0, 360, 0.01, this.state.angleOffset, this.onAngleOffsetChange) }
-        { this.sliderNode('L', 'L', 0, 100, 0.01, this.state.L, this.onLChange) }
-        { this.sliderNode('A', 'A', -128, 128, 0.01, this.state.A, this.onAChange) }
-        { this.sliderNode('B', 'B', -128, 128, 0.01, this.state.B, this.onBChange) }
+        {sliderNodeObjs.map((obj) => {
+          return this._sliderNode(obj);
+        })}
         <ColorBoxes
             radius={this.state.radius}
             angleOffset={this.state.angleOffset}
