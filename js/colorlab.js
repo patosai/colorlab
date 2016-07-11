@@ -22,7 +22,7 @@ var ColorBoxes = React.createClass({
   },
 
   shouldComponentUpdate(nextProps, nextState) {
-    var propsToCheck = ['radius', 'angle', 'L', 'A', 'B'];
+    var propsToCheck = ['angleOffset', 'radius', 'angle', 'L', 'A', 'B'];
     return !(propsToCheck.every((prop) => {
       return this.props[prop] === nextProps[prop];
     }));
