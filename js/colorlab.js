@@ -1,4 +1,37 @@
 var ColorBoxes = React.createClass({
+  getInitialState() {
+    return {
+      colors: {}
+    };
+  },
+
+  _setColorState(num, L, A, B, hex) {
+    var newColorState = {
+      L: L,
+      A: A,
+      B: B,
+      hex: hex,
+    };
+
+    if (this.state.colors[num]) {
+      var propsToCheck = ['L', 'A', 'B', 'hex'];
+      var colorsChanged = !(propsToCheck.every((prop) => {
+        return this.state.colors[num][prop] === newColorState[prop];
+      }));
+      if (!colorsChanged) {
+        return;
+      }
+    }
+
+    var colorCopy = this.state.colors;
+    colorCopy[num] = newColorState;
+    this.setState({colors: colorCopy});
+  },
+
+  _getColorState(num) {
+    return this.state.colors[num] || {};
+  },
+
   _generateColor(num) {
     if (num < 0 || num > 7) {
       return;
@@ -10,23 +43,42 @@ var ColorBoxes = React.createClass({
     var newL = this.props.L;
     var newA = this.props.A + (this.props.radius * Math.cos(angle));
     var newB = this.props.B + (this.props.radius * Math.sin(angle));
+    var hex = chroma(newL, newA, newB, 'lab').hex();
 
-    return chroma(newL, newA, newB, 'lab').hex();
+    this._setColorState(num, newL, newA, newB, hex);
+
+    return hex;
   },
 
   _boxNode(num) {
     var className = 'box box' + num;
     return (
-      <div className={className} style={{backgroundColor: this._generateColor(num)}} />
+      <div className={className} style={{backgroundColor: this._generateColor(num)}}>
+        {"L: " + this._getColorState(num).L}
+        <br/>
+        {"A: " + this._getColorState(num).A}
+        <br/>
+        {"B: " + this._getColorState(num).B}
+        <br/>
+        {"hex: " + this._getColorState(num).hex}
+      </div>
     );
   },
 
-  shouldComponentUpdate(nextProps, nextState) {
-    var propsToCheck = ['angleOffset', 'radius', 'angle', 'L', 'A', 'B'];
-    return !(propsToCheck.every((prop) => {
-      return this.props[prop] === nextProps[prop];
-    }));
-  },
+/*
+ *  shouldComponentUpdate(nextProps, nextState) {
+ *    var propsToCheck = ['angleOffset', 'radius', 'angle', 'L', 'A', 'B'];
+ *    var propsChanged = !(propsToCheck.every((prop) => {
+ *      return this.props[prop] === nextProps[prop];
+ *    }));
+ *
+ *    if (propsChanged) return true;
+ *
+ *     TODO check if state.colors has changed
+ *
+ *    return false;
+ *  },
+ */
 
   render() {
     var numbers = [];
