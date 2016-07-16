@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 label,
 input[type=range] {
   display: block;
@@ -7,11 +11,13 @@ input[type=range] {
   width: 400px;
 }
 
-#container-left,
-#container-right {
-  width: 49%;
-  display: inline-block;
-  vertical-align: top;
+#wrapper {
+  display: flex;
+  flex-direction: row;
+}
+
+#wrapper > {
+  flex: 1;
 }
 
 .boxes {

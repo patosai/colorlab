@@ -24,7 +24,7 @@ var ColorBoxes = React.createClass({
     var hex = this._labToHex(color.L, color.A, color.B);
     return (
       <div className={className}
-        style={{backgroundColor: hex, color: (color.L >= 62) ? "black" : "white"}}>
+        style={{backgroundColor: hex, color: (color.L >= 60) ? "black" : "white"}}>
         {"L: " + color.L}
         <br/>
         {"A: " + color.A}
@@ -160,7 +160,7 @@ var ColorLab = React.createClass({
       }
     ];
     return (
-      <div>
+      <div className="colorlab">
         {sliderNodeObjs.map((obj) => {
           return this._sliderNode(obj);
         })}
@@ -177,7 +177,6 @@ var ColorLab = React.createClass({
 });
 
 ReactDOM.render(
-  <div>
   <ColorLab colorGenerator={(num, L, A, B, radius, angleOffset) => {
       // 8 colors
       var angle = ( (num * 45) + angleOffset ) * (Math.PI / 180);
@@ -191,7 +190,11 @@ ReactDOM.render(
         A: newA,
         B: newB,
       };
-    }}/>
+    }}/>,
+  document.getElementById('container-left')
+);
+
+ReactDOM.render(
   <ColorLab colorGenerator={(num, L, A, B, radius, angleOffset) => {
       // 8 colors
       var newL = (num == 0 ? 10 :
@@ -210,7 +213,6 @@ ReactDOM.render(
         A: newA,
         B: newB,
       };
-    }}/>
-  </div>,
-  document.getElementById('container-left')
+    }}/>,
+  document.getElementById('container-right')
 );
