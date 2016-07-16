@@ -1,84 +1,51 @@
 var ColorBoxes = React.createClass({
-  getInitialState() {
-    return {
-      colors: {}
-    };
-  },
-
-  _setColorState(num, L, A, B, hex) {
-    var newColorState = {
-      L: L,
-      A: A,
-      B: B,
-      hex: hex,
-    };
-
-    if (this.state.colors[num]) {
-      var propsToCheck = ['L', 'A', 'B', 'hex'];
-      var colorsChanged = !(propsToCheck.every((prop) => {
-        return this.state.colors[num][prop] === newColorState[prop];
-      }));
-      if (!colorsChanged) {
-        return;
-      }
-    }
-
-    var colorCopy = this.state.colors;
-    colorCopy[num] = newColorState;
-    this.setState({colors: colorCopy});
-  },
-
-  _getColorState(num) {
-    return this.state.colors[num] || {};
-  },
-
   _generateColor(num) {
     if (num < 0 || num > 7) {
       return;
     }
 
-    // 8 colors
-    var angle = ( (num * 45) + this.props.angleOffset ) * (Math.PI / 180);
+    return this.props.colorGenerator(
+      num,
+      this.props.L,
+      this.props.A,
+      this.props.B,
+      this.props.radius,
+      this.props.angleOffset
+    );
+  },
 
-    var newL = this.props.L;
-    var newA = this.props.A + (this.props.radius * Math.cos(angle));
-    var newB = this.props.B + (this.props.radius * Math.sin(angle));
-    var hex = chroma(newL, newA, newB, 'lab').hex();
-
-    this._setColorState(num, newL, newA, newB, hex);
-
-    return hex;
+  _labToHex(L, A, B) {
+    return chroma(L, A, B, 'lab').hex();
   },
 
   _boxNode(num) {
     var className = 'box box' + num;
+    var color = this._generateColor(num);
+    var hex = this._labToHex(color.L, color.A, color.B);
     return (
-      <div className={className} style={{backgroundColor: this._generateColor(num)}}>
-        {"L: " + this._getColorState(num).L}
+      <div className={className}
+        style={{backgroundColor: hex, color: (color.L >= 62) ? "black" : "white"}}>
+        {"L: " + color.L}
         <br/>
-        {"A: " + this._getColorState(num).A}
+        {"A: " + color.A}
         <br/>
-        {"B: " + this._getColorState(num).B}
+        {"B: " + color.B}
         <br/>
-        {"hex: " + this._getColorState(num).hex}
+        {"hex: " + hex}
       </div>
     );
   },
 
-/*
- *  shouldComponentUpdate(nextProps, nextState) {
- *    var propsToCheck = ['angleOffset', 'radius', 'angle', 'L', 'A', 'B'];
- *    var propsChanged = !(propsToCheck.every((prop) => {
- *      return this.props[prop] === nextProps[prop];
- *    }));
- *
- *    if (propsChanged) return true;
- *
- *     TODO check if state.colors has changed
- *
- *    return false;
- *  },
- */
+  shouldComponentUpdate(nextProps, nextState) {
+    var propsToCheck = ['angleOffset', 'radius', 'L', 'A', 'B'];
+    var propsChanged = !(propsToCheck.every((prop) => {
+      return this.props[prop] === nextProps[prop];
+    }));
+
+    if (propsChanged) return true;
+
+    return false;
+  },
 
   render() {
     var numbers = [];
@@ -202,10 +169,48 @@ var ColorLab = React.createClass({
             angleOffset={this.state.angleOffset}
             L={this.state.L}
             A={this.state.A}
-            B={this.state.B}/>
+            B={this.state.B}
+            colorGenerator={this.props.colorGenerator}/>
       </div>
     );
   },
 });
 
-ReactDOM.render(<ColorLab />, document.getElementById('container-left'));
+ReactDOM.render(
+  <div>
+  <ColorLab colorGenerator={(num, L, A, B, radius, angleOffset) => {
+      // 8 colors
+      var angle = ( (num * 45) + angleOffset ) * (Math.PI / 180);
+
+      var newL = L;
+      var newA = A + (radius * Math.cos(angle));
+      var newB = B + (radius * Math.sin(angle));
+
+      return {
+        L: newL,
+        A: newA,
+        B: newB,
+      };
+    }}/>
+  <ColorLab colorGenerator={(num, L, A, B, radius, angleOffset) => {
+      // 8 colors
+      var newL = (num == 0 ? 10 :
+                  (num == 1 ? 18 :
+                  (num == 2 ? 42 :
+                  (num == 3 ? 50 :
+                  (num == 4 ? 58 :
+                  (num == 5 ? 66 :
+                  (num == 6 ? 90 :
+                  (num == 7 ? 98 : 0))))))));
+      var newA = A;
+      var newB = B;
+
+      return {
+        L: newL,
+        A: newA,
+        B: newB,
+      };
+    }}/>
+  </div>,
+  document.getElementById('container-left')
+);
